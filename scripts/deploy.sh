@@ -1,3 +1,4 @@
+cat > scripts/deploy.sh << 'EOL'
 #!/bin/bash
 
 # Log start of deployment
@@ -41,7 +42,7 @@ DB_SCHEMA=$(echo ${SUPABASE_DB_SCHEMA:-tnadlink})
 
 # Create domain configuration file directly with proper format
 echo "Creating domain configuration file..."
-cat > /var/www/html/public/var/${HOSTNAME}.conf.php << EOL
+cat > /var/www/html/public/var/${HOSTNAME}.conf.php << EOL2
 ;<?php exit; ?>
 ;*** DO NOT REMOVE THE LINE ABOVE ***
 
@@ -100,7 +101,7 @@ items[]="div"
 items[]="font"
 items[]="img"
 items[]="strong"
-EOL
+EOL2
 
 echo "Verifying configuration file..."
 ls -la /var/www/html/public/var/
@@ -123,7 +124,7 @@ fi
 
 # Apply custom headers for security
 echo "Setting security headers..."
-cat > /etc/apache2/conf-available/security-headers.conf << EOL
+cat > /etc/apache2/conf-available/security-headers.conf << EOL2
 <IfModule mod_headers.c>
     Header always set X-Frame-Options "SAMEORIGIN"
     Header always set X-Content-Type-Options "nosniff"
@@ -132,7 +133,7 @@ cat > /etc/apache2/conf-available/security-headers.conf << EOL
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     Header always set Permissions-Policy "geolocation=(self), microphone=(), camera=()"
 </IfModule>
-EOL
+EOL2
 
 a2enconf security-headers
 
@@ -158,6 +159,12 @@ fi
 echo "Clearing cache..."
 rm -rf /var/www/html/public/var/cache/* || true
 
+# Debug script to help diagnose issues
+if [ -f "/var/www/html/scripts/debug.sh" ]; then
+    echo "Running debug script..."
+    bash /var/www/html/scripts/debug.sh
+fi
+
 # Add Apache debug info
 echo "Apache configuration:"
 apache2 -S
@@ -165,3 +172,6 @@ apache2 -S
 # Start Apache
 echo "Starting TN Ad Link server..."
 apache2-foreground
+EOL
+
+chmod +x scripts/deploy.sh
