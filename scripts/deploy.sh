@@ -3,7 +3,7 @@
 # Log start of deployment
 echo "Starting TN Ad Link deployment process..."
 
-# Run the comprehensive fix script
+# Run the comprehensive fix script for the autoload issue
 if [ -f "/var/www/html/scripts/comprehensive-fix.sh" ]; then
     echo "Running comprehensive fix script..."
     bash /var/www/html/scripts/comprehensive-fix.sh
@@ -26,6 +26,12 @@ spl_autoload_register(function ($class) {
 EOL
 fi
 
+# Run the installation fix script
+if [ -f "/var/www/html/scripts/installation-fix.sh" ]; then
+    echo "Running installation fix script..."
+    bash /var/www/html/scripts/installation-fix.sh
+fi
+
 # Wait for database connection
 echo "Checking database connection..."
 php /var/www/html/scripts/wait-for-db.php
@@ -33,12 +39,6 @@ if [ $? -ne 0 ]; then
     echo "Database connection failed. Exiting."
     exit 1
 fi
-
-# Create required directories
-echo "Setting up directory structure..."
-mkdir -p /var/www/html/public/var
-mkdir -p /var/www/html/public/plugins
-mkdir -p /var/www/html/public/www/admin/plugins
 
 # Get the hostname from environment
 HOSTNAME=${RENDER_EXTERNAL_HOSTNAME:-tnadlink.onrender.com}
@@ -71,7 +71,7 @@ schema="$DB_SCHEMA"
 ssl=true
 
 [webpath]
-admin="https://${HOSTNAME}/admin"
+admin="https://${HOSTNAME}/www/admin"
 delivery="https://${HOSTNAME}/delivery"
 deliverySSL="https://${HOSTNAME}/delivery"
 images="https://${HOSTNAME}/images"
@@ -145,10 +145,7 @@ EOL
 
 a2enconf security-headers
 
-# Global ServerName to suppress warning
-echo "ServerName ${HOSTNAME}" >> /etc/apache2/apache2.conf
-
-# Set proper permissions
+# Set permissions again to be sure
 echo "Setting permissions..."
 chmod -R 777 /var/www/html/public/var
 chmod -R 777 /var/www/html/public/plugins
@@ -157,12 +154,12 @@ chmod -R 777 /var/www/html/public/lib
 chmod -R 777 /var/www/html/var
 
 # Debug info
-echo "Directory structure:"
-find /var/www/html/public/lib -type f -name "autoload.php" | xargs ls -la
+echo "Directory structure of admin directory:"
+find /var/www/html/public/www/admin -type f -name "*.php" | xargs ls -la 2>/dev/null || echo "No PHP files found in admin directory"
 
-# Output init.php contents for debugging
-echo "Contents of init.php around line 45:"
-sed -n '44,50p' /var/www/html/public/init.php 2>/dev/null || echo "Cannot access init.php"
+# Output Apache configuration
+echo "Apache configuration:"
+apache2 -S
 
 # Start Apache
 echo "Starting TN Ad Link server..."
