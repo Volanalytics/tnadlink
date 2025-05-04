@@ -38,7 +38,7 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 # Configure virtual host for tnadlink.com
 RUN echo '<VirtualHost *:80>\n\
     ServerName tnadlink.com\n\
-    ServerAlias www.tnadlink.com\n\
+    ServerAlias www.tnadlink.com tnadlink.onrender.com\n\
     DocumentRoot ${APACHE_DOCUMENT_ROOT}\n\
     ErrorLog ${APACHE_LOG_DIR}/tnadlink-error.log\n\
     CustomLog ${APACHE_LOG_DIR}/tnadlink-access.log combined\n\
@@ -71,6 +71,12 @@ COPY custom/ /var/www/html/custom/
 COPY config/ /var/www/html/config/
 COPY scripts/ /var/www/html/scripts/
 
+# Create default config.inc.php file if needed
+RUN if [ ! -f "/var/www/html/public/config.inc.php" ]; then \
+    touch /var/www/html/public/config.inc.php; \
+    chmod 777 /var/www/html/public/config.inc.php; \
+fi
+
 # Install Composer dependencies if needed
 RUN if [ -f "/var/www/html/public/composer.json" ]; then \
     cd /var/www/html/public && \
@@ -82,15 +88,6 @@ RUN chmod -R 777 /var/www/html/public/var || true
 RUN chmod -R 777 /var/www/html/public/plugins || true
 RUN chmod -R 777 /var/www/html/public/www/admin/plugins || true
 RUN chmod -R 777 /var/www/html/var || true
-
-# Create INSTALLED file with timestamp
-RUN echo "$(date)" > /var/www/html/public/var/INSTALLED || true
-
-# Set up Apache to work with a global ServerName
-RUN echo "ServerName tnadlink.com" >> /etc/apache2/apache2.conf
-
-# Verify PHP modules are installed
-RUN php -m
 
 # Set working directory
 WORKDIR /var/www/html
