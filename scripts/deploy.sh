@@ -21,9 +21,80 @@ mkdir -p /var/www/html/public/www/admin/plugins
 HOSTNAME=${RENDER_EXTERNAL_HOSTNAME:-tnadlink.onrender.com}
 echo "Using hostname: $HOSTNAME"
 
-# Copy domain configuration file
-echo "Setting up domain configuration..."
-cp /var/www/html/config/database.conf.php /var/www/html/public/var/${HOSTNAME}.conf.php
+# Get database credentials from environment
+DB_HOST=$(echo $SUPABASE_DB_HOST)
+DB_PORT=$(echo ${SUPABASE_DB_PORT:-5432})
+DB_USER=$(echo $SUPABASE_DB_USER)
+DB_PASS=$(echo $SUPABASE_DB_PASSWORD)
+DB_NAME=$(echo $SUPABASE_DB_NAME)
+DB_SCHEMA=$(echo ${SUPABASE_DB_SCHEMA:-tnadlink})
+
+# Create domain configuration file directly with proper format
+echo "Creating domain configuration file..."
+cat > /var/www/html/public/var/${HOSTNAME}.conf.php << EOL
+;<?php exit; ?>
+;*** DO NOT REMOVE THE LINE ABOVE ***
+
+[database]
+type=postgresql
+host="$DB_HOST"
+port="$DB_PORT"
+username="$DB_USER"
+password="$DB_PASS"
+name="$DB_NAME"
+persistent=false
+protocol=https
+schema="$DB_SCHEMA"
+ssl=true
+
+[webpath]
+admin="https://${HOSTNAME}/admin"
+delivery="https://${HOSTNAME}/delivery"
+deliverySSL="https://${HOSTNAME}/delivery"
+images="https://${HOSTNAME}/images"
+imagesSSL="https://${HOSTNAME}/images"
+api="https://${HOSTNAME}/api"
+
+[ui]
+applicationName="TN Ad Link"
+headerLogoFilename="/custom/themes/tn-logo.png"
+enabled=true
+supportLink="mailto:admin@tnadlink.com"
+dashboardEnabled=true
+
+[geotargeting]
+type=geoip
+showUnavailable=false
+
+[openads]
+requireSSL=true
+sslPort=443
+
+[delivery]
+cache=true
+acls=true
+aclsDirectSelection=true
+obfuscate=false
+
+[maintenance]
+autoMaintenance=true
+timeLimitScripts=1800
+
+[store]
+webDir="/var/www/html/public/var"
+
+[allowedTags]
+items[]="a"
+items[]="b"
+items[]="div"
+items[]="font"
+items[]="img"
+items[]="strong"
+EOL
+
+echo "Verifying configuration file..."
+ls -la /var/www/html/public/var/
+cat /var/www/html/public/var/${HOSTNAME}.conf.php
 
 # Check if TN Ad Link is installed
 if [ ! -f /var/www/html/public/var/INSTALLED ]; then
@@ -65,9 +136,20 @@ chmod -R 777 /var/www/html/public/plugins
 chmod -R 777 /var/www/html/public/www/admin/plugins
 chmod -R 777 /var/www/html/var
 
+# Create a default config.inc.php file if needed
+if [ ! -f "/var/www/html/public/config.inc.php" ]; then
+    echo "Creating default config.inc.php..."
+    touch /var/www/html/public/config.inc.php
+    chmod 777 /var/www/html/public/config.inc.php
+fi
+
 # Clear cache
 echo "Clearing cache..."
 rm -rf /var/www/html/public/var/cache/* || true
+
+# Add Apache debug info
+echo "Apache configuration:"
+apache2 -S
 
 # Start Apache
 echo "Starting TN Ad Link server..."
