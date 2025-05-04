@@ -1,8 +1,27 @@
-cat > scripts/deploy.sh << 'EOL'
 #!/bin/bash
 
 # Log start of deployment
 echo "Starting TN Ad Link deployment process..."
+
+# Create the autoload.php file if it doesn't exist
+if [ ! -f "/var/www/html/public/lib/vendor/autoload.php" ]; then
+    echo "Creating autoload.php file..."
+    mkdir -p /var/www/html/public/lib/vendor
+    cat > /var/www/html/public/lib/vendor/autoload.php << 'EOL'
+<?php
+
+// Minimal autoloader
+spl_autoload_register(function ($class) {
+    $file = str_replace("\\", "/", $class) . ".php";
+    if (file_exists(__DIR__ . "/../" . $file)) {
+        require_once __DIR__ . "/../" . $file;
+        return true;
+    }
+    return false;
+});
+EOL
+    echo "Created autoload.php file."
+fi
 
 # Wait for database connection
 echo "Checking database connection..."
@@ -17,16 +36,6 @@ echo "Setting up directory structure..."
 mkdir -p /var/www/html/public/var
 mkdir -p /var/www/html/public/plugins
 mkdir -p /var/www/html/public/www/admin/plugins
-mkdir -p /var/www/html/public/lib/vendor
-
-# Make sure the autoload.php file exists
-if [ ! -f "/var/www/html/public/lib/vendor/autoload.php" ]; then
-    echo "Fixing autoload.php path..."
-    mkdir -p /var/www/html/public/lib/vendor
-    if [ -f "/var/www/html/lib/vendor/autoload.php" ]; then
-        cp -R /var/www/html/lib/* /var/www/html/public/lib/
-    fi
-fi
 
 # Get the hostname from environment
 HOSTNAME=${RENDER_EXTERNAL_HOSTNAME:-tnadlink.onrender.com}
@@ -40,9 +49,9 @@ DB_PASS=$(echo $SUPABASE_DB_PASSWORD)
 DB_NAME=$(echo $SUPABASE_DB_NAME)
 DB_SCHEMA=$(echo ${SUPABASE_DB_SCHEMA:-tnadlink})
 
-# Create domain configuration file directly with proper format
+# Create domain configuration file
 echo "Creating domain configuration file..."
-cat > /var/www/html/public/var/${HOSTNAME}.conf.php << EOL2
+cat > /var/www/html/public/var/${HOSTNAME}.conf.php << EOL
 ;<?php exit; ?>
 ;*** DO NOT REMOVE THE LINE ABOVE ***
 
@@ -101,11 +110,7 @@ items[]="div"
 items[]="font"
 items[]="img"
 items[]="strong"
-EOL2
-
-echo "Verifying configuration file..."
-ls -la /var/www/html/public/var/
-cat /var/www/html/public/var/${HOSTNAME}.conf.php
+EOL
 
 # Check if TN Ad Link is installed
 if [ ! -f /var/www/html/public/var/INSTALLED ]; then
@@ -122,56 +127,22 @@ else
     echo "TN Ad Link is already installed."
 fi
 
-# Apply custom headers for security
-echo "Setting security headers..."
-cat > /etc/apache2/conf-available/security-headers.conf << EOL2
-<IfModule mod_headers.c>
-    Header always set X-Frame-Options "SAMEORIGIN"
-    Header always set X-Content-Type-Options "nosniff"
-    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
-    Header always set Content-Security-Policy "default-src 'self' https://${HOSTNAME}; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'"
-    Header always set Referrer-Policy "strict-origin-when-cross-origin"
-    Header always set Permissions-Policy "geolocation=(self), microphone=(), camera=()"
-</IfModule>
-EOL2
-
-a2enconf security-headers
-
-# Global ServerName to suppress warning
-echo "ServerName ${HOSTNAME}" >> /etc/apache2/apache2.conf
-
 # Set proper permissions
 echo "Setting permissions..."
 chmod -R 777 /var/www/html/public/var
 chmod -R 777 /var/www/html/public/plugins
-chmod -R 777 /var/www/html/public/www/admin/plugins
-chmod -R 777 /var/www/html/var
+chmod -R 777 /var/www/html/public/www
 chmod -R 777 /var/www/html/public/lib
+chmod -R 777 /var/www/html/var
 
-# Create a default config.inc.php file if needed
-if [ ! -f "/var/www/html/public/config.inc.php" ]; then
-    echo "Creating default config.inc.php..."
-    touch /var/www/html/public/config.inc.php
-    chmod 777 /var/www/html/public/config.inc.php
-fi
+# Output init.php contents for debugging
+echo "Contents of init.php line 45:"
+sed -n '44,46p' /var/www/html/public/init.php 2>/dev/null || echo "Cannot access init.php"
 
-# Clear cache
-echo "Clearing cache..."
-rm -rf /var/www/html/public/var/cache/* || true
-
-# Debug script to help diagnose issues
-if [ -f "/var/www/html/scripts/debug.sh" ]; then
-    echo "Running debug script..."
-    bash /var/www/html/scripts/debug.sh
-fi
-
-# Add Apache debug info
-echo "Apache configuration:"
-apache2 -S
+# Output directory listing for debugging
+echo "Directory structure:"
+ls -la /var/www/html/public/lib/vendor
 
 # Start Apache
 echo "Starting TN Ad Link server..."
-apache2-foreground
-EOL
-
-chmod +x scripts/deploy.sh
+exec apache2-foreground
