@@ -12,7 +12,6 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
-    wget \
     && docker-php-ext-configure intl \
     && docker-php-ext-install \
     mbstring \
@@ -57,9 +56,11 @@ RUN mkdir -p /var/www/html/public \
     /var/www/html/var/logs \
     /var/www/html/var/tmp
 
-# Download and extract Revive Adserver - using wget instead of curl
+# Copy the Revive Adserver zip file from local assets directory
+COPY assets/revive-adserver-5.4.1.zip /tmp/
+
+# Extract Revive Adserver
 RUN cd /tmp && \
-    wget --no-check-certificate https://github.com/revive-adserver/revive-adserver/releases/download/v5.4.1/revive-adserver-5.4.1.zip && \
     unzip -q revive-adserver-5.4.1.zip && \
     cp -r revive-adserver/* /var/www/html/public/ && \
     rm -rf /tmp/revive-adserver* /tmp/revive-adserver-5.4.1.zip
