@@ -548,6 +548,22 @@
             opacity: 0.7;
             font-size: 0.9rem;
         }
+
+        .legal-links {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .legal-links a {
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0 10px;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .legal-links a:hover {
+            color: var(--tn-white);
+        }
         
         /* Responsive Styles */
         @media screen and (max-width: 991px) {
@@ -933,8 +949,8 @@
                 
                 <div class="footer-contact">
                     <h3>Contact Us</h3>
-                    <p><i class="fas fa-map-marker-alt"></i> 11205 Lebanon Rd #79, Mt Juliet, TN 37122</p>
-                    <p><i class="fas fa-phone"></i> (615) 671-7672</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 11205 Lebanon Rd, Suite #79, Mt Juliet, TN 37122</p>
+                    <p><i class="fas fa-phone"></i> 615-671-7672</p>
                     <p><i class="fas fa-envelope"></i> info@tnadlink.com</p>
                 </div>
                 
@@ -961,6 +977,10 @@
             
             <div class="footer-bottom">
                 <p>&copy; 2025 TN Ad Link. All rights reserved.</p>
+                <div class="legal-links">
+                    <a href="privacy-policy.html">Privacy Policy</a>
+                    <a href="terms-conditions.html">Terms & Conditions</a>
+                </div>
             </div>
         </div>
     </footer>
