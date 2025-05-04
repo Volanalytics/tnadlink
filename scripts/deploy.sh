@@ -16,6 +16,16 @@ echo "Setting up directory structure..."
 mkdir -p /var/www/html/public/var
 mkdir -p /var/www/html/public/plugins
 mkdir -p /var/www/html/public/www/admin/plugins
+mkdir -p /var/www/html/public/lib/vendor
+
+# Make sure the autoload.php file exists
+if [ ! -f "/var/www/html/public/lib/vendor/autoload.php" ]; then
+    echo "Fixing autoload.php path..."
+    mkdir -p /var/www/html/public/lib/vendor
+    if [ -f "/var/www/html/lib/vendor/autoload.php" ]; then
+        cp -R /var/www/html/lib/* /var/www/html/public/lib/
+    fi
+fi
 
 # Get the hostname from environment
 HOSTNAME=${RENDER_EXTERNAL_HOSTNAME:-tnadlink.onrender.com}
@@ -135,6 +145,7 @@ chmod -R 777 /var/www/html/public/var
 chmod -R 777 /var/www/html/public/plugins
 chmod -R 777 /var/www/html/public/www/admin/plugins
 chmod -R 777 /var/www/html/var
+chmod -R 777 /var/www/html/public/lib
 
 # Create a default config.inc.php file if needed
 if [ ! -f "/var/www/html/public/config.inc.php" ]; then
