@@ -24,9 +24,13 @@ RUN apt-get update && apt-get install -y \
     intl \
     opcache
 
-# Set up runtime directory for Apache
-RUN mkdir -p /var/run/apache2 \
-    && echo 'Define APACHE_RUN_DIR /var/run/apache2' >> /etc/apache2/apache2.conf
+# Fix Apache runtime directory issue
+ENV APACHE_RUN_DIR=/var/run/apache2
+ENV APACHE_PID_FILE=/var/run/apache2/apache2.pid
+ENV APACHE_LOCK_DIR=/var/lock/apache2
+ENV APACHE_LOG_DIR=/var/log/apache2
+
+RUN mkdir -p ${APACHE_RUN_DIR} ${APACHE_LOCK_DIR} ${APACHE_LOG_DIR}
 
 # Configure PHP
 COPY docker/php.ini /usr/local/etc/php/conf.d/custom.ini
@@ -70,6 +74,9 @@ COPY revive/ /var/www/html/public/
 COPY custom/ /var/www/html/custom/
 COPY config/ /var/www/html/config/
 COPY scripts/ /var/www/html/scripts/
+
+# Fix autoloader issue by creating required directories and files
+RUN mkdir -p /var/www/html/public/lib/vendor
 
 # Set permissions
 RUN chmod -R 777 /var/www/html/public/var || true
