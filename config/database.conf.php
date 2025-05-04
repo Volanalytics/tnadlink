@@ -1,10 +1,11 @@
 <?php
+
 /**
- * TN Ad Link Database Configuration
- * This file will be copied to the appropriate location during deployment
+ * TN Ad Link Revive Adserver Configuration File
+ * Domain-specific configuration 
  */
 
-// Database settings
+// Database configuration
 $GLOBALS['_MAX']['CONF']['database'] = array(
     'type'           => 'postgresql',
     'host'           => getenv('SUPABASE_DB_HOST'),
@@ -19,10 +20,10 @@ $GLOBALS['_MAX']['CONF']['database'] = array(
 );
 
 // URL configuration settings
-$GLOBALS['_MAX']['CONF']['webpath']['admin'] = 'https://tnadlink.com/admin';
-$GLOBALS['_MAX']['CONF']['webpath']['delivery'] = 'https://tnadlink.com/delivery';
-$GLOBALS['_MAX']['CONF']['webpath']['images'] = 'https://tnadlink.com/images';
-$GLOBALS['_MAX']['CONF']['webpath']['api'] = 'https://tnadlink.com/api';
+$GLOBALS['_MAX']['CONF']['webpath']['admin'] = 'https://tnadlink.onrender.com/admin';
+$GLOBALS['_MAX']['CONF']['webpath']['delivery'] = 'https://tnadlink.onrender.com/delivery';
+$GLOBALS['_MAX']['CONF']['webpath']['images'] = 'https://tnadlink.onrender.com/images';
+$GLOBALS['_MAX']['CONF']['webpath']['api'] = 'https://tnadlink.onrender.com/api';
 
 // Tennessee Ad Link branding
 $GLOBALS['_MAX']['CONF']['ui']['applicationName'] = 'TN Ad Link';
@@ -38,4 +39,28 @@ $GLOBALS['_MAX']['CONF']['openads']['sslPort'] = 443;
 
 // Cache settings
 $GLOBALS['_MAX']['CONF']['delivery']['cache'] = true;
+
+// Delivery settings
+$GLOBALS['_MAX']['CONF']['delivery']['acls'] = true;
+$GLOBALS['_MAX']['CONF']['delivery']['aclsDirectSelection'] = true;
+$GLOBALS['_MAX']['CONF']['delivery']['obfuscate'] = false;
+
+// Interface settings
+$GLOBALS['_MAX']['CONF']['ui']['enabled'] = true;
+$GLOBALS['_MAX']['CONF']['ui']['supportLink'] = 'mailto:admin@tnadlink.com';
+$GLOBALS['_MAX']['CONF']['ui']['dashboardEnabled'] = true;
+
+// Maintenance settings
+$GLOBALS['_MAX']['CONF']['maintenance']['autoMaintenance'] = true;
+$GLOBALS['_MAX']['CONF']['maintenance']['timeLimitScripts'] = 1800;
+
+// Default admin credentials
+$GLOBALS['_MAX']['CONF']['oa']['passCheck'] = 'f06177d0b8dc18d59584a3b0a1c61161';
+$GLOBALS['_MAX']['CONF']['oa']['passPhrase'] = 'TN Ad Link Passphrase';
+
+// Additional settings
+$GLOBALS['_MAX']['CONF']['allowedTags'] = array('a', 'b', 'div', 'font', 'img', 'strong');
+
+// Ensure log and cache directories exist
+$GLOBALS['_MAX']['CONF']['store']['webDir'] = '/var/www/html/public/var';
 ?>
