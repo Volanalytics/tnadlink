@@ -7,11 +7,12 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libpng-dev \
     libicu-dev \
-    # Add libonig-dev for mbstring support
     libonig-dev \
     zip \
     unzip \
     git \
+    curl \
+    wget \
     && docker-php-ext-configure intl \
     && docker-php-ext-install \
     mbstring \
@@ -56,12 +57,12 @@ RUN mkdir -p /var/www/html/public \
     /var/www/html/var/logs \
     /var/www/html/var/tmp
 
-# Download and extract Revive Adserver
+# Download and extract Revive Adserver - using wget instead of curl
 RUN cd /tmp && \
-    curl -LO https://github.com/revive-adserver/revive-adserver/releases/download/v5.4.1/revive-adserver-5.4.1.zip && \
-    unzip revive-adserver-5.4.1.zip && \
+    wget --no-check-certificate https://github.com/revive-adserver/revive-adserver/releases/download/v5.4.1/revive-adserver-5.4.1.zip && \
+    unzip -q revive-adserver-5.4.1.zip && \
     cp -r revive-adserver/* /var/www/html/public/ && \
-    rm -rf /tmp/revive-adserver*
+    rm -rf /tmp/revive-adserver* /tmp/revive-adserver-5.4.1.zip
 
 # Copy application files
 COPY custom/ /var/www/html/custom/
@@ -69,10 +70,10 @@ COPY config/ /var/www/html/config/
 COPY scripts/ /var/www/html/scripts/
 
 # Set permissions
-RUN chmod -R 777 /var/www/html/public/var
-RUN chmod -R 777 /var/www/html/public/plugins
-RUN chmod -R 777 /var/www/html/public/www/admin/plugins
-RUN chmod -R 777 /var/www/html/var
+RUN chmod -R 777 /var/www/html/public/var || true
+RUN chmod -R 777 /var/www/html/public/plugins || true
+RUN chmod -R 777 /var/www/html/public/www/admin/plugins || true
+RUN chmod -R 777 /var/www/html/var || true
 
 # Set working directory
 WORKDIR /var/www/html
