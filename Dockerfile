@@ -27,6 +27,10 @@ RUN apt-get update && apt-get install -y \
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+# Set up runtime directory for Apache
+RUN mkdir -p /var/run/apache2 \
+    && echo 'Define APACHE_RUN_DIR /var/run/apache2' >> /etc/apache2/apache2.conf
+
 # Configure PHP
 COPY docker/php.ini /usr/local/etc/php/conf.d/custom.ini
 
@@ -60,28 +64,31 @@ RUN mkdir -p /var/www/html/public \
     /var/www/html/var/cache \
     /var/www/html/var/logs \
     /var/www/html/var/tmp \
-    /var/www/html/public/var \
-    /var/www/html/public/lib/vendor
+    /var/www/html/public/var
 
-# Directly copy the Revive Adserver files
-COPY revive/ /var/www/html/public/
+# Download Revive Adserver
+WORKDIR /tmp
+RUN curl -LO https://github.com/revive-adserver/revive-adserver/releases/download/v5.5.2/revive-adserver-5.5.2.zip \
+    && unzip -q revive-adserver-5.5.2.zip \
+    && ls -la \
+    && cp -r revive-adserver/* /var/www/html/public/ \
+    && cd /var/www/html/public \
+    && ls -la \
+    && rm -rf /tmp/revive-adserver* /tmp/revive-adserver-5.5.2.zip
 
 # Copy application files
 COPY custom/ /var/www/html/custom/
 COPY config/ /var/www/html/config/
 COPY scripts/ /var/www/html/scripts/
 
-# Create default config.inc.php file if needed
-RUN if [ ! -f "/var/www/html/public/config.inc.php" ]; then \
-    touch /var/www/html/public/config.inc.php; \
-    chmod 777 /var/www/html/public/config.inc.php; \
-fi
+# Install Composer dependencies
+WORKDIR /var/www/html/public
+RUN if [ -f "composer.json" ]; then \
+        composer install --no-dev --optimize-autoloader; \
+    fi
 
-# Install Composer dependencies if needed
-RUN if [ -f "/var/www/html/public/composer.json" ]; then \
-    cd /var/www/html/public && \
-    composer install --no-dev --optimize-autoloader; \
-fi
+# Create lib/vendor directory if needed
+RUN mkdir -p /var/www/html/public/lib/vendor
 
 # Set permissions
 RUN chmod -R 777 /var/www/html/public/var || true
