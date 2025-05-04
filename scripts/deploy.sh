@@ -11,12 +11,19 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Make sure the var directory exists
+# Create required directories
+echo "Setting up directory structure..."
 mkdir -p /var/www/html/public/var
+mkdir -p /var/www/html/public/plugins
+mkdir -p /var/www/html/public/www/admin/plugins
 
-# Copy configuration file
-echo "Setting up database configuration..."
-cp /var/www/html/config/database.conf.php /var/www/html/public/var/
+# Get the hostname from environment
+HOSTNAME=${RENDER_EXTERNAL_HOSTNAME:-tnadlink.onrender.com}
+echo "Using hostname: $HOSTNAME"
+
+# Copy domain configuration file
+echo "Setting up domain configuration..."
+cp /var/www/html/config/database.conf.php /var/www/html/public/var/${HOSTNAME}.conf.php
 
 # Check if TN Ad Link is installed
 if [ ! -f /var/www/html/public/var/INSTALLED ]; then
@@ -40,13 +47,27 @@ cat > /etc/apache2/conf-available/security-headers.conf << EOL
     Header always set X-Frame-Options "SAMEORIGIN"
     Header always set X-Content-Type-Options "nosniff"
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
-    Header always set Content-Security-Policy "default-src 'self' https://tnadlink.com; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'"
+    Header always set Content-Security-Policy "default-src 'self' https://${HOSTNAME}; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     Header always set Permissions-Policy "geolocation=(self), microphone=(), camera=()"
 </IfModule>
 EOL
 
 a2enconf security-headers
+
+# Global ServerName to suppress warning
+echo "ServerName ${HOSTNAME}" >> /etc/apache2/apache2.conf
+
+# Set proper permissions
+echo "Setting permissions..."
+chmod -R 777 /var/www/html/public/var
+chmod -R 777 /var/www/html/public/plugins
+chmod -R 777 /var/www/html/public/www/admin/plugins
+chmod -R 777 /var/www/html/var
+
+# Clear cache
+echo "Clearing cache..."
+rm -rf /var/www/html/public/var/cache/* || true
 
 # Start Apache
 echo "Starting TN Ad Link server..."
