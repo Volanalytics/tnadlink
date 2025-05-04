@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TN Ad Link - Tennessee's Premier Ad Server</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect x=%2210%22 y=%2210%22 width=%2280%22 height=%2280%22 rx=%2210%22 fill=%22%230057e7%22></rect><text x=%2222%22 y=%2275%22 font-family=%22Arial%22 font-size=%2260%22 font-weight=%22bold%22 fill=%22white%22>TN</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --tn-blue: #0057e7;
+            --tn-red: #d31f1f;
+            --tn-white: #ffffff;
+            --tn-dark: #333333;
+            --tn-gray: #666666;
+            --tn-light-gray: #f8f9fa;
+            --tn-border: #e5e5e5;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--tn-dark);
+            background-color: var(--tn-white);
+        }
+        
+        a {
+            color: var(--tn-blue);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        a:hover {
+            color: var(--tn-red);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background-color: var(--tn-white);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--tn-blue);
+        }
+        
+        .tn-accent {
+            color: var(--tn-red);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 30px;
+        }
+        
+        nav ul li a {
+            font-weight: 600;
+            color: var(--tn-dark);
+        }
+        
+        nav ul li a:hover {
+            color: var(--tn-blue);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--tn-dark);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(to right, var(--tn-blue), #1a75ff);
+            color: var(--tn-white);
+            padding: 80px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40%;
+            height: 100%;
+            background: url('https://via.placeholder.com/800x600') no-repeat center center/cover;
+            opacity: 0.2;
+            clip-path: polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%);
+        }
+        
+        .hero-content {
+            width: 60%;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--tn-red);
+            color: var(--tn-white);
+            border-radius: 5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #b51a1a;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--tn-white);
+            margin-left: 15px;
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--tn-white);
+            color: var(--tn-blue);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background-color: var(--tn-white);
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--tn-dark);
+            margin-bottom: 15px;
+        }
+        
+        .section-title p {
+            font-size: 1.1rem;
+            color: var(--tn-gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        
+        .feature-card {
+            background-color: var(--tn-light-gray);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--tn-blue);
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--tn-dark);
+        }
+        
+        .feature-card p {
+            color: var(--tn-gray);
+        }
+        
+        /* Tennessee Section */
+        .tennessee {
+            padding: 80px 0;
+            background-color: var(--tn-light-gray);
+        }
+        
+        .tennessee-content {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+        
+        .tennessee-text {
+            flex: 1;
+        }
+        
+        .tennessee-text h2 {
+            font-size: 2.2rem;
+            color: var(--tn-dark);
+            margin-bottom: 20px;
+        }
+        
+        .tennessee-text p {
+            margin-bottom: 15px;
+            color: var(--tn-gray);
+        }
+        
+        .tennessee-image {
+            flex: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tennessee-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        /* Statistics Section */
+        .statistics {
+            padding: 80px 0;
+            background-color: var(--tn-white);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .stat-card {
+            background-color: var(--tn-light-gray);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--tn-blue);
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--tn-dark);
+            font-weight: 600;
+        }
+        
+        /* Performance Section */
+        .performance {
+            padding: 80px 0;
+            background-color: var(--tn-light-gray);
+        }
+        
+        .performance-content {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        
+        .performance-item {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            background-color: var(--tn-white);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .performance-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+        
+        .performance-icon {
+            flex: 0 0 80px;
+            height: 80px;
+            background-color: var(--tn-light-gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--tn-blue);
+        }
+        
+        .performance-text {
+            flex: 1;
+        }
+        
+        .performance-text h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--tn-dark);
+        }
+        
+        .performance-text p {
+            color: var(--tn-gray);
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            padding: 80px 0;
+            background-color: var(--tn-white);
+        }
+        
+        .testimonials-slider {
+            margin-top: 40px;
+            display: flex;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            gap: 30px;
+        }
+        
+        .testimonial-card {
+            min-width: 100%;
+            background-color: var(--tn-light-gray);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .testimonial-content {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: var(--tn-gray);
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 15px;
+        }
+        
+        .author-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .author-info h4 {
+            font-size: 1.1rem;
+            color: var(--tn-dark);
+        }
+        
+        .author-info p {
+            font-size: 0.9rem;
+            color: var(--tn-gray);
+        }
+        
+        .testimonial-dots {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 10px;
+        }
+        
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--tn-border);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .dot.active {
+            background-color: var(--tn-blue);
+        }
+        
+        /* CTA Section */
+        .cta {
+            padding: 80px 0;
+            background: linear-gradient(to right, var(--tn-blue), #1a75ff);
+            color: var(--tn-white);
+            text-align: center;
+        }
+        
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .cta p {
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            opacity: 0.9;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--tn-dark);
+            color: var(--tn-white);
+            padding: 60px 0 30px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .footer-logo img {
+            height: 30px;
+            margin-right: 10px;
+        }
+        
+        .footer-logo-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--tn-white);
+        }
+        
+        .footer-contact p {
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+        
+        .footer-links h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--tn-white);
+        }
+        
+        .footer-links ul {
+            list-style: none;
+        }
+        
+        .footer-links ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links ul li a {
+            color: var(--tn-white);
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        
+        .footer-links ul li a:hover {
+            opacity: 1;
+        }
+        
+        .social-media {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+        
+        .social-icon:hover {
+            background-color: var(--tn-blue);
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 30px;
+            text-align: center;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive Styles */
+        @media screen and (max-width: 991px) {
+            .hero-content {
+                width: 80%;
+            }
+            
+            .tennessee-content {
+                flex-direction: column;
+            }
+            
+            .performance-item {
+                flex-direction: column !important;
+                text-align: center;
+            }
+            
+            .performance-icon {
+                margin: 0 auto;
+            }
+        }
+        
+        @media screen and (max-width: 768px) {
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background-color: var(--tn-white);
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            }
+            
+            nav ul.active {
+                display: flex;
+            }
+            
+            nav ul li {
+                margin: 10px 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero-content {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .btn {
+                display: block;
+                margin: 10px auto;
+                width: 100%;
+                max-width: 300px;
+                text-align: center;
+            }
+            
+            .btn-outline {
+                margin-left: 0;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+        }
+        
+        @media screen and (max-width: 576px) {
+            .hero {
+                padding: 60px 0;
+            }
+            
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .features, .tennessee, .statistics, .performance, .testimonials, .cta {
+                padding: 60px 0;
+            }
+            
+            .section-title {
+                margin-bottom: 40px;
+            }
+            
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+            
+            .feature-card, .stat-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <!-- SVG logo for TN Ad Link -->
+                <svg width="180" height="48" viewBox="0 0 300 80" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Blue Square with TN -->
+                  <rect x="10" y="10" width="60" height="60" rx="8" fill="#0057e7"/>
+                  <text x="25" y="55" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="white">TN</text>
+                  
+                  <!-- Ad Link Text -->
+                  <text x="80" y="55" font-family="Arial, sans-serif" font-size="32" font-weight="bold">
+                    <tspan fill="#d31f1f">Ad</tspan>
+                    <tspan fill="#0057e7" x="130" y="55">Link</tspan>
+                  </text>
+                </svg>
+            </div>
+            
+            <nav>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul id="navMenu">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#statistics">Statistics</a></li>
+                    <li><a href="#performance">Performance</a></li>
+                    <li><a href="#testimonials">Testimonials</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Tennessee's Premier Ad Server Solution</h1>
+                <p>TN Ad Link delivers powerful, localized advertising technology tailored for Tennessee businesses. Take control of your digital advertising campaigns with our comprehensive platform.</p>
+                <a href="#contact" class="btn">Get Started</a>
+                <a href="#features" class="btn btn-outline">Learn More</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Powerful Ad Management Features</h2>
+                <p>TN Ad Link provides everything you need to manage, deliver, and optimize your advertising campaigns.</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <h3>Campaign Management</h3>
+                    <p>Create, manage, and optimize multiple advertising campaigns simultaneously. Set delivery parameters, target audiences, and scheduling with ease.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3>Advanced Targeting</h3>
+                    <p>Target your advertisements based on location, time, device, browser, language, and many other parameters to reach the right audience.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Real-Time Analytics</h3>
+                    <p>Track impressions, clicks, conversions, and other metrics in real-time. Make data-driven decisions to optimize your advertising ROI.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-plug"></i>
+                    </div>
+                    <h3>Easy Integration</h3>
+                    <p>Seamlessly integrate TN Ad Link with your existing websites, applications, and third-party platforms through our API and plugins.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h3>Privacy Compliance</h3>
+                    <p>Stay compliant with privacy regulations with our built-in consent management, data protection features, and privacy-friendly tracking.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile Optimized</h3>
+                    <p>Deliver ads that look perfect on all devices with our responsive ad formats and mobile-first approach to ad delivery.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Tennessee Section -->
+    <section class="tennessee">
+        <div class="container">
+            <div class="tennessee-content">
+                <div class="tennessee-text">
+                    <h2>Tennessee-Focused Advertising</h2>
+                    <p>TN Ad Link is specifically designed for Tennessee businesses, offering localized targeting capabilities and insights tailored to the Tennessee market.</p>
+                    <p>Our platform understands the unique needs of Tennessee advertisers and publishers, providing specialized tools for local businesses to reach their target audience effectively.</p>
+                    <p>With regional support and expertise, we help Tennessee businesses grow through effective digital advertising strategies optimized for local success.</p>
+                </div>
+                
+                <div class="tennessee-image">
+                    <!-- Tennessee Map with Counties -->
+                    <img src="https://raw.githubusercontent.com/username/tnadlink/main/images/tennessee-map.jpg" alt="Tennessee Map with Counties">
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Statistics Section -->
+    <section class="statistics" id="statistics">
+        <div class="container">
+            <div class="section-title">
+                <h2>Comprehensive Analytics</h2>
+                <p>Gain valuable insights into your advertising performance with our detailed reporting tools.</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="stat-label">Real-Time Reporting</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-number">
+                        <i class="fas fa-filter"></i>
+                    </div>
+                    <div class="stat-label">Customizable Dashboards</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-number">
+                        <i class="fas fa-file-export"></i>
+                    </div>
+                    <div class="stat-label">Export Capabilities</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-number">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="stat-label">Performance Alerts</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Performance Section -->
+    <section class="performance" id="performance">
+        <div class="container">
+            <div class="section-title">
+                <h2>Optimize Your Ad Performance</h2>
+                <p>TN Ad Link offers powerful tools to help you maximize the performance of your advertising campaigns.</p>
+            </div>
+            
+            <div class="performance-content">
+                <div class="performance-item">
+                    <div class="performance-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="performance-text">
+                        <h3>High-Speed Ad Delivery</h3>
+                        <p>Our optimized delivery system ensures that your ads load quickly, reducing bounce rates and improving user experience across all platforms and devices.</p>
+                    </div>
+                </div>
+                
+                <div class="performance-item">
+                    <div class="performance-icon">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <div class="performance-text">
+                        <h3>A/B Testing</h3>
+                        <p>Test different versions of your ads to determine which performs better. Our A/B testing tools help you optimize headlines, images, and call-to-actions for maximum impact.</p>
+                    </div>
+                </div>
+                
+                <div class="performance-item">
+                    <div class="performance-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="performance-text">
+                        <h3>Frequency Capping</h3>
+                        <p>Control how often your ads are shown to the same user to prevent ad fatigue and optimize your budget, ensuring your message reaches the right people at the right time.</p>
+                    </div>
+                </div>
+                
+                <div class="performance-item">
+                    <div class="performance-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="performance-text">
+                        <h3>Intelligent Optimization</h3>
+                        <p>Our smart algorithms automatically optimize your ad delivery based on performance data, ensuring that your ads reach the most responsive audience segments.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-title">
+                <h2>What Our Clients Say</h2>
+                <p>Trusted by Tennessee businesses of all sizes to deliver powerful advertising solutions.</p>
+            </div>
+            
+            <div class="testimonials-slider" id="testimonialsSlider">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "TN Ad Link has transformed how we approach digital advertising. The platform's ease of use and powerful targeting capabilities have significantly increased our ROI. The Tennessee-specific insights have been invaluable for our local business."
+                    </div>
+                    
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <!-- Replace with actual avatar -->
+                            <img src="https://via.placeholder.com/50x50" alt="Sarah Johnson">
+                        </div>
+                        
+                        <div class="author-info">
+                            <h4>Sarah Johnson</h4>
+                            <p>Marketing Director, Nashville Retail Group</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- More testimonials would be added here and controlled by JS -->
+            </div>
+            
+            <div class="testimonial-dots">
+                <span class="dot active" data-index="0"></span>
+                <span class="dot" data-index="1"></span>
+                <span class="dot" data-index="2"></span>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Elevate Your Advertising?</h2>
+            <p>Join Tennessee's premier ad server platform and take control of your digital advertising strategy today.</p>
+            <a href="#contact" class="btn">Get Started Now</a>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <div class="footer-logo">
+                        <!-- Replace with your actual logo image -->
+                        <div style="width:30px; height:30px; background-color:#0057e7; color:#fff; display:flex; align-items:center; justify-content:center; border-radius:6px; font-weight:bold;">TN</div>
+                        <span class="footer-logo-text"><span class="tn-accent">TN</span> Ad Link</span>
+                    </div>
+                    
+                    <p>Tennessee's premier advertising server platform, providing powerful tools for digital advertising management and optimization.</p>
+                    
+                    <div class="social-media">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-contact">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> 11205 Lebanon Rd #79, Mt Juliet, TN 37122</p>
+                    <p><i class="fas fa-phone"></i> (615) 671-7672</p>
+                    <p><i class="fas fa-envelope"></i> info@tnadlink.com</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#statistics">Statistics</a></li>
+                        <li><a href="#performance">Performance</a></li>
+                        <li><a href="#testimonials">Testimonials</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">API Reference</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Support Center</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 TN Ad Link. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navMenu = document.getElementById('navMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 70,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    navMenu.classList.remove('active');
+                }
+            });
+        });
+        
+        // Simple testimonial slider functionality
+        const dots = document.querySelectorAll('.dot');
+        
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                // Remove active class from all dots
+                dots.forEach(d => d.classList.remove('active'));
+                
+                // Add active class to clicked dot
+                dot.classList.add('active');
+                
+                // In a real implementation, this would slide to the corresponding testimonial
+                // For now, we're just showing the first one
+            });
+        });
+    </script>
+</body>
+</html>
