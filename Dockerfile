@@ -1,3 +1,4 @@
+cat > Dockerfile << 'EOL'
 FROM php:8.1-apache
 
 # Install required extensions and dependencies
@@ -113,3 +114,4 @@ RUN echo 'export APACHE_RUN_USER=www-data' >> /etc/apache2/envvars && \
 
 # Run deployment script
 CMD ["/bin/bash", "/var/www/html/scripts/deploy.sh"]
+EOL
