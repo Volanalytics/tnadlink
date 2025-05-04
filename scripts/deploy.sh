@@ -3,6 +3,12 @@
 # Log start of deployment
 echo "Starting TN Ad Link deployment process..."
 
+# Run the init.php fix script if it exists
+if [ -f "/var/www/html/scripts/fix-init.sh" ]; then
+    echo "Running init.php fix script..."
+    bash /var/www/html/scripts/fix-init.sh
+fi
+
 # Create the autoload.php file if it doesn't exist
 if [ ! -f "/var/www/html/public/lib/vendor/autoload.php" ]; then
     echo "Creating autoload.php file..."
@@ -126,6 +132,21 @@ if [ ! -f /var/www/html/public/var/INSTALLED ]; then
 else
     echo "TN Ad Link is already installed."
 fi
+
+# Apply custom headers for security
+echo "Setting security headers..."
+cat > /etc/apache2/conf-available/security-headers.conf << EOL
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    Header always set Content-Security-Policy "default-src 'self' https://${HOSTNAME}; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(self), microphone=(), camera=()"
+</IfModule>
+EOL
+
+a2enconf security-headers
 
 # Set proper permissions
 echo "Setting permissions..."
