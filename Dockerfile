@@ -24,6 +24,9 @@ RUN apt-get update && apt-get install -y \
     intl \
     opcache
 
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 # Configure PHP
 COPY docker/php.ini /usr/local/etc/php/conf.d/custom.ini
 
@@ -49,14 +52,16 @@ RUN echo '<VirtualHost *:80>\n\
 # Enable site and Apache modules
 RUN a2ensite tnadlink && a2enmod rewrite headers
 
-# Create directory structure
+# Create directory structure with correct permissions
 RUN mkdir -p /var/www/html/public \
     /var/www/html/custom \
     /var/www/html/config \
     /var/www/html/scripts \
     /var/www/html/var/cache \
     /var/www/html/var/logs \
-    /var/www/html/var/tmp
+    /var/www/html/var/tmp \
+    /var/www/html/public/var \
+    /var/www/html/public/lib/vendor
 
 # Directly copy the Revive Adserver files
 COPY revive/ /var/www/html/public/
@@ -66,15 +71,26 @@ COPY custom/ /var/www/html/custom/
 COPY config/ /var/www/html/config/
 COPY scripts/ /var/www/html/scripts/
 
+# Install Composer dependencies if needed
+RUN if [ -f "/var/www/html/public/composer.json" ]; then \
+    cd /var/www/html/public && \
+    composer install --no-dev --optimize-autoloader; \
+fi
+
 # Set permissions
 RUN chmod -R 777 /var/www/html/public/var || true
 RUN chmod -R 777 /var/www/html/public/plugins || true
 RUN chmod -R 777 /var/www/html/public/www/admin/plugins || true
 RUN chmod -R 777 /var/www/html/var || true
 
+# Create INSTALLED file with timestamp
+RUN echo "$(date)" > /var/www/html/public/var/INSTALLED || true
+
+# Set up Apache to work with a global ServerName
+RUN echo "ServerName tnadlink.com" >> /etc/apache2/apache2.conf
+
 # Verify PHP modules are installed
-RUN php -m | grep pdo
-RUN php -m | grep pgsql
+RUN php -m
 
 # Set working directory
 WORKDIR /var/www/html
