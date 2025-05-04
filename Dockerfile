@@ -16,6 +16,8 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install \
     mbstring \
     pgsql \
+    pdo \
+    pdo_pgsql \
     zip \
     xml \
     gd \
@@ -69,6 +71,10 @@ RUN chmod -R 777 /var/www/html/public/var || true
 RUN chmod -R 777 /var/www/html/public/plugins || true
 RUN chmod -R 777 /var/www/html/public/www/admin/plugins || true
 RUN chmod -R 777 /var/www/html/var || true
+
+# Verify PHP modules are installed
+RUN php -m | grep pdo
+RUN php -m | grep pgsql
 
 # Set working directory
 WORKDIR /var/www/html
