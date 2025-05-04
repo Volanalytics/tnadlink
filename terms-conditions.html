@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms & Conditions | TN Ad Link</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect x=%2210%22 y=%2210%22 width=%2280%22 height=%2280%22 rx=%2210%22 fill=%22%230057e7%22></rect><text x=%2222%22 y=%2275%22 font-family=%22Arial%22 font-size=%2260%22 font-weight=%22bold%22 fill=%22white%22>TN</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --tn-blue: #0057e7;
+            --tn-red: #d31f1f;
+            --tn-white: #ffffff;
+            --tn-dark: #333333;
+            --tn-gray: #666666;
+            --tn-light-gray: #f8f9fa;
+            --tn-border: #e5e5e5;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--tn-dark);
+            background-color: var(--tn-white);
+        }
+        
+        a {
+            color: var(--tn-blue);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        a:hover {
+            color: var(--tn-red);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background-color: var(--tn-white);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--tn-blue);
+        }
+        
+        .tn-accent {
+            color: var(--tn-red);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 30px;
+        }
+        
+        nav ul li a {
+            font-weight: 600;
+            color: var(--tn-dark);
+        }
+        
+        nav ul li a:hover {
+            color: var(--tn-blue);
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 60px 0;
+        }
+        
+        .terms-title {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .terms-title h1 {
+            font-size: 2.5rem;
+            color: var(--tn-dark);
+            margin-bottom: 10px;
+        }
+        
+        .terms-title p {
+            font-size: 1.1rem;
+            color: var(--tn-gray);
+        }
+        
+        .terms-section {
+            margin-bottom: 40px;
+        }
+        
+        .terms-section h2 {
+            color: var(--tn-blue);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--tn-border);
+        }
+        
+        .terms-section h3 {
+            color: var(--tn-red);
+            font-size: 1.4rem;
+            margin: 25px 0 15px;
+        }
+        
+        .terms-section p, .terms-section ul, .terms-section ol {
+            margin-bottom: 20px;
+        }
+        
+        .terms-section ul, .terms-section ol {
+            padding-left: 20px;
+        }
+        
+        .terms-section li {
+            margin-bottom: 10px;
+        }
+        
+        .important-note {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .important-note strong {
+            color: var(--tn-red);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--tn-dark);
+            color: var(--tn-white);
+            padding: 40px 0 20px;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        
+        .footer-contact {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-contact h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .footer-contact p {
+            margin-bottom: 8px;
+            opacity: 0.8;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 40px;
+        }
+        
+        .footer-links-column {
+            min-width: 150px;
+        }
+        
+        .footer-links-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .footer-links-column ul {
+            list-style: none;
+        }
+        
+        .footer-links-column ul li {
+            margin-bottom: 8px;
+        }
+        
+        .footer-links-column ul li a {
+            color: var(--tn-white);
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        
+        .footer-links-column ul li a:hover {
+            opacity: 1;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .legal-links {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .legal-links a {
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0 10px;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .legal-links a:hover {
+            color: var(--tn-white);
+        }
+        
+        /* Responsive Styles */
+        @media screen and (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <!-- SVG logo for TN Ad Link -->
+                <svg width="180" height="48" viewBox="0 0 300 80" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Blue Square with TN -->
+                  <rect x="10" y="10" width="60" height="60" rx="8" fill="#0057e7"/>
+                  <text x="25" y="55" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="white">TN</text>
+                  
+                  <!-- Ad Link Text -->
+                  <text x="80" y="55" font-family="Arial, sans-serif" font-size="32" font-weight="bold">
+                    <tspan fill="#d31f1f">Ad</tspan>
+                    <tspan fill="#0057e7" x="130" y="55">Link</tspan>
+                  </text>
+                </svg>
+            </div>
+            
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#features">Features</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <div class="terms-title">
+                <h1>Terms & Conditions</h1>
+                <p>Last updated: May 4, 2025</p>
+            </div>
+            
+            <div class="terms-section">
+                <h2>1. Introduction</h2>
+                <p>As a customer of TN Ad Link, you are subject to the Terms & Conditions outlined on this page. Please make sure to carefully study these Terms & Conditions before opening an account. Please be aware that a violation of the Terms & Conditions can result in immediate termination of your account, without prior warning.</p>
+                
+                <p>These Terms & Conditions apply to all services and products supplied by or on behalf of TN Ad Link, LLC, also doing business as "TN Ad Link".</p>
+                
+                <div class="important-note">
+                    <strong>Important note:</strong> By accessing or using our services, you acknowledge that you have read, understood, and agree to be bound by these Terms & Conditions.
+                </div>
+            </div>
+            
+            <div class="terms-section">
+                <h2>2. Definitions</h2>
+                <p>In these Terms & Conditions, the following terms are defined as:</p>
+                
+                <ul>
+                    <li><strong>Supplier</strong> is understood to mean TN Ad Link, LLC, established in Mt Juliet, Tennessee, and registered with the Tennessee Secretary of State.</li>
+                    <li><strong>Client</strong> is understood to mean any natural person or legal entity that has entered into, or wishes to enter into, an Agreement with the Supplier.</li>
+                    <li><strong>Agreement</strong> is understood to mean an arrangement between Supplier and Client pertaining to the supply of Products and/or Services by Supplier to Client. The Agreement contains specific arrangements on the provision of services and products and constitutes one entity with these Terms & Conditions.</li>
+                    <li><strong>Products</strong> is understood to mean any and all goods or services supplied by Supplier to Client, including but not limited to ad server software, plugins, support, etc.</li>
+                    <li><strong>Services</strong> is understood to mean any and all activities supplied by Supplier to Client, including but not limited to Hosting, support, and maintenance.</li>
+                    <li><strong>Hosting</strong> is understood to mean the provisioning of electronic and digital facilities for the benefit of websites, computer systems, computer software, storage of data, and other applications. Among other things, hosting can consist of making available computer processing capacity, storage space for programs and data, connections between the computer equipment being used and the internet, data transfer, power supply including emergency power, monitoring of availability and stability of the systems used, etc.</li>
+                    <li><strong>Hosting Account</strong> consists of all technical facilities and corresponding supportive activities as made available to a Client by Supplier for the benefit of Hosting.</li>
+                </ul>
+            </div>
+            
+            <div class="terms-section">
+                <h2>3. Applicability</h2>
+                <p>These Terms & Conditions apply to all offers, tenders, Contracts, Products and Services from Supplier, and to all other actions and activities carried out by Supplier.</p>
+                
+                <p>By entering into an Agreement with the Supplier, the Client declares to have been informed about these Terms & Conditions, as well as that the Client agrees with these Conditions.</p>
+                
+                <p>By entering into an Agreement with the Supplier, the Client expressly declares that purchasing or any other conditions of the Client do not apply to the Agreement.</p>
+                
+                <p>If any provision from these Terms & Conditions should be or become void, then the other provisions of these Terms & Conditions shall remain fully in force. Supplier and Client shall in such a situation immediately enter into consultations in order to agree on new provisions replacing the provision that are or have become void.</p>
+                
+                <p>The Agreement will take precedence over these Terms & Conditions in case there is a conflict between the Agreement and these Terms & Conditions.</p>
+                
+                <p>Arrangements that are agreed in addition to, or conflict with these Terms & Conditions should be recorded in writing in the Agreement, and signed by the Client and the Supplier.</p>
+                
+                <p>Supplier is always authorized to modify these Terms & Conditions. Modifications will come into force 28 days after the Client has been informed about them. If Client does not agree with all or part of the modifications, he is entitled to cancel the Agreement as per the date of the modified conditions coming into force.</p>
+            </div>
+            
+            <div class="terms-section">
+                <h2>4. Offers and Agreements</h2>
+                <h3>4.1 Offers</h3>
+                <p>All offers and tenders of Supplier are free of obligations, unless explicitly stated otherwise in the offer or the tender. A formulated tender does not oblige Supplier to supply a part thereof against a corresponding part of the price offered.</p>
+                
+                <h3>4.2 Entering into an Agreement</h3>
+                <p>An Agreement between Supplier and Client is only established after a signed Agreement is returned to Supplier by Client, or if Supplier has started with the execution of the activities described in the offer.</p>
+                
+                <h3>4.3 Term of the Agreement</h3>
+                <p>If the Agreement is entered for a certain period of time, it will be automatically extended with the same period of time, except if one of the Parties terminates the Agreement in writing, taking into account a notice period of one (1) month prior to the end of the current period, unless the Agreement specifies otherwise.</p>
+            </div>
+            
+            <div class="terms-section">
+                <h2>5. Prices and Payment</h2>
+                <h3>5.1 Prices</h3>
+                <p>All prices are in United States Dollars (USD) and exclusive of VAT and other governmental duties, unless explicitly stated otherwise.</p>
+                
+                <h3>5.2 Price Changes</h3>
+                <p>Supplier is entitled to increase agreed prices once per year. Supplier will inform the Client of price changes no later than 28 days before the price change takes effect. If the Client does not agree with the price change, Client is entitled to terminate the Agreement as per the date the price change is due to take effect, with due regard to a notice period of 14 days.</p>
+                
+                <h3>5.3 Payment Terms</h3>
+                <p>Unless otherwise agreed in writing, payment of invoices should be made within 14 days of the invoice date. If this period is exceeded, Client is in default without a notice of default being required.</p>
+                
+                <h3>5.4 Interest Due to Late Payment</h3>
+                <p>If Client is in default, Client will owe legal interest on the outstanding amount. Parts of a month are considered to be a full month in this regard.</p>
+                
+                <h3>5.5 Collection Costs</h3>
+                <p>If Client is in default or fails to fulfill their payment obligation(s), all reasonable costs incurred to obtain settlement will be at the expense of Client.</p>
+            </div>
+            
+            <div class="terms-section">
+                <h2>6. Delivery and Execution</h2>
+                <h3>6.1 Delivery Period</h3>
+                <p>All delivery periods mentioned by Supplier are indicative and are never to be considered as strict deadlines. Exceeding a delivery period does not entitle Client to compensation.</p>
+                
+                <h3>6.2 Acceptance</h3>
+                <p>After delivery of Products or Services, Client shall check these for defects and notify Supplier of any defects found within 14 days. If no notification of defects is made within 14 days, the Products or Services are deemed to have been accepted by Client.</p>
+            </div>
+            
+            <div class="terms-section">
+                <h2>7. Availability and Maintenance</h2>
+                <h3>7.1 Availability</h3>
+                <p>Supplier will make a reasonable effort to ensure optimal availability of the Services, but does not guarantee uninterrupted availability.</p>
+                
+                <h3>7.2 Maintenance</h3>
+                <p>Supplier reserves the right to temporarily put the Services out of operation for the purpose of maintenance, adjustment or improvement of the Services. Supplier will try to let such an outage take place outside office hours as much as possible and will make reasonable efforts to inform Client in a timely manner. However, Supplier is never liable for compensation of damage in connection with such an outage.</p>
+            </div>
+            
+            <div class="terms-section">
+                <h2>8. Intellectual Property Rights</h2>
+                <p>All intellectual property rights to all Products and Services developed or made available under the Agreement, including software, websites, databases, equipment or other materials such as analyses, designs, documentation, reports, offers as well as preparatory material, rest exclusively with Supplier or its licensors.</p>
+                
+                <p>Client shall only acquire the rights of use explicitly granted in these Terms & Conditions and by law. Any other or further right of Client to reproduce or disclose the Products and Services is excluded.</p>
+            </div>
+            
+            <div class="terms-section">
+                <h2>9. Confidentiality</h2>
+                <p>Parties shall treat all information they obtain from each other in any form whatsoever, including but not limited to business information, personal data, electronic data, and know-how, as confidential. They shall only use it for the execution of the Agreement.</p>
+                
+                <p>Parties will impose the same obligation on their employees as well as on third parties engaged by them for the execution of the Agreement.</p>
+            </div>
+            
+            <div class="terms-section">
+                <h2>10. Privacy and Data Protection</h2>
+                <p>Supplier respects the privacy of Client and will process personal data in accordance with applicable privacy legislation. For more information, please refer to our Privacy Policy.</p>
+                
+                <p>Client warrants that all legal requirements regarding the processing of personal data, including requirements under the Tennessee Information Protection Act (TIPA), have been strictly observed.</p>
+            </div>
+            
+            <div class="terms-section">
+                <h2>11. Limitation of Liability</h2>
+                <p>Supplier's total liability for attributable failure to properly perform the Agreement is limited to compensation for direct damage up to the amount of the price stipulated for that Agreement (excluding VAT). If the Agreement is primarily a continuing performance agreement with a term of more than one year, the stipulated price is set at the total of the fees (excluding VAT) stipulated for one year. Under no circumstances will the total compensation for direct damage exceed $10,000 (ten thousand dollars).</p>
+                
+                <p>Supplier's liability for indirect damage, consequential damage, loss of profit, lost savings, reduced goodwill, damage due to business interruption, damage as a result of claims from Client's customers, damage in connection with the use of third-party items, materials or software that Supplier is instructed to use by Client and damage in connection with the engagement of suppliers by Supplier on Client's instructions is excluded.</p>
+                
+                <p>The limitations mentioned in this article do not apply if and insofar as the damage is the result of intentional acts or deliberate recklessness on the part of Supplier or its management.</p>
+            </div>
+            
+            <div class="terms-section">
+                <h2>12. Force Majeure</h2>
+                <p>In case of force majeure, which includes but is not limited to disruptions in telecommunication infrastructure, internet, domestic network, power outages, domestic disturbances, mobilization, war, traffic congestion, strikes, lockouts, business interruptions, supply delays, fire, flood, import and export restrictions and in the event that Supplier is prevented from delivering due to its own suppliers, irrespective of the reasons, as a result of which fulfillment of the Agreement cannot reasonably be expected from Supplier, the execution of the Agreement will be suspended, or the Agreement will be terminated when the force majeure situation has lasted for more than 90 days, all this without any obligation to pay compensation.</p>
+            </div>
+            
+            <div class="terms-section">
+                <h2>13. Termination</h2>
+                <h3>13.1 Termination for Breach</h3>
+                <p>Either party may terminate the Agreement with immediate effect, without judicial intervention and without any compensation being due, if:</p>
+                <ul>
+                    <li>The other party fails to fulfill one or more of its obligations and, after having been properly notified in writing with a reasonable period to fulfill, continues to fail to fulfill its obligations;</li>
+                    <li>The other party applies for or is granted a moratorium or is declared bankrupt, or if the business of the other party is liquidated or terminated other than for the purpose of reconstruction or merger.</li>
+                </ul>
+                
+                <h3>13.2 Consequences of Termination</h3>
+                <p>After termination of the Agreement, for whatever reason, Client shall cease all use of the Products and Services and return all copies of the Products in their possession to Supplier or destroy them.</p>
+                
+                <h3>13.3 Outstanding Payments</h3>
+                <p>Amounts invoiced by Supplier before the termination in connection with work already performed or delivered under the Agreement, remain due and become immediately payable at the time of termination.</p>
+            </div>
+            
+            <div class="terms-section">
+                <h2>14. Applicable Law and Disputes</h2>
+                <p>The Agreement and all legal relationships arising from it are governed by the laws of the State of Tennessee. Any dispute between Supplier and Client shall be submitted to the competent court in Nashville, Tennessee.</p>
+            </div>
+            
+            <div class="terms-section">
+                <h2>15. Miscellaneous</h2>
+                <p>If any provision of these Terms & Conditions is null and void or is voided, the other provisions of these Terms & Conditions shall remain fully in effect.</p>
+                
+                <p>The headings in these Terms & Conditions are for convenience only and shall not affect their interpretation.</p>
+                
+                <p>These Terms & Conditions may be changed from time to time. The most current version will always be posted on our website.</p>
+                
+                <p>If you have any questions about these Terms & Conditions, please contact us:</p>
+                
+                <p>
+                    TN Ad Link<br>
+                    11205 Lebanon Rd<br>
+                    Suite #79<br>
+                    Mt Juliet, TN 37122<br>
+                    615-671-7672<br>
+                    info@tnadlink.com
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-contact">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> 11205 Lebanon Rd, Suite #79, Mt Juliet, TN 37122</p>
+                    <p><i class="fas fa-phone"></i> 615-671-7672</p>
+                    <p><i class="fas fa-envelope"></i> info@tnadlink.com</p>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="footer-links-column">
+                        <h3>Quick Links</h3>
+                        <ul>
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="index.html#features">Features</a></li>
+                            <li><a href="index.html#statistics">Statistics</a></li>
+                            <li><a href="index.html#performance">Performance</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-links-column">
+                        <h3>Resources</h3>
+                        <ul>
+                            <li><a href="#">Documentation</a></li>
+                            <li><a href="#">API Reference</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">Support</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 TN Ad Link. All rights reserved.</p>
+                <div class="legal-links">
+                    <a href="privacy-policy.html">Privacy Policy</a>
+                    <a href="terms-conditions.html">Terms & Conditions</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
