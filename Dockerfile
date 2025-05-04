@@ -7,6 +7,8 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libpng-dev \
     libicu-dev \
+    # Add libonig-dev for mbstring support
+    libonig-dev \
     zip \
     unzip \
     git \
