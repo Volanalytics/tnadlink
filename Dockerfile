@@ -24,13 +24,12 @@ RUN apt-get update && apt-get install -y \
     intl \
     opcache
 
-# Fix Apache runtime directory issue
-ENV APACHE_RUN_DIR=/var/run/apache2
-ENV APACHE_PID_FILE=/var/run/apache2/apache2.pid
-ENV APACHE_LOCK_DIR=/var/lock/apache2
-ENV APACHE_LOG_DIR=/var/log/apache2
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-RUN mkdir -p ${APACHE_RUN_DIR} ${APACHE_LOCK_DIR} ${APACHE_LOG_DIR}
+# Set up runtime directory for Apache
+RUN mkdir -p /var/run/apache2 \
+    && echo 'Define APACHE_RUN_DIR /var/run/apache2' >> /etc/apache2/apache2.conf
 
 # Configure PHP
 COPY docker/php.ini /usr/local/etc/php/conf.d/custom.ini
@@ -67,28 +66,50 @@ RUN mkdir -p /var/www/html/public \
     /var/www/html/var/tmp \
     /var/www/html/public/var
 
-# Copy Revive Adserver files
-COPY revive/ /var/www/html/public/
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy Revive Adserver files - this is the key difference - we copy to the html root first
+COPY revive/ /var/www/html/
 
 # Copy application files
 COPY custom/ /var/www/html/custom/
 COPY config/ /var/www/html/config/
 COPY scripts/ /var/www/html/scripts/
 
-# Fix autoloader issue by creating required directories and files
-RUN mkdir -p /var/www/html/public/lib/vendor
+# Fix the directory structure by copying all needed files to public directory
+RUN cp -R /var/www/html/lib /var/www/html/public/ && \
+    cp -R /var/www/html/plugins /var/www/html/public/ && \
+    cp -R /var/www/html/www /var/www/html/public/ && \
+    cp -R /var/www/html/*.php /var/www/html/public/ && \
+    cp -R /var/www/html/*.txt /var/www/html/public/ && \
+    cp -R /var/www/html/*.md /var/www/html/public/ && \
+    cp -R /var/www/html/*.xml /var/www/html/public/ && \
+    cp -R /var/www/html/*.html /var/www/html/public/ && \
+    cp -R /var/www/html/var /var/www/html/public/ || true
+
+# Install composer dependencies
+WORKDIR /var/www/html
+RUN if [ -f composer.json ]; then \
+    composer install --no-dev --no-interaction --optimize-autoloader; \
+    fi
 
 # Set permissions
 RUN chmod -R 777 /var/www/html/public/var || true
 RUN chmod -R 777 /var/www/html/public/plugins || true
 RUN chmod -R 777 /var/www/html/public/www/admin/plugins || true
 RUN chmod -R 777 /var/www/html/var || true
+RUN chmod -R 777 /var/www/html/public/lib || true
 
 # Set global ServerName
 RUN echo "ServerName tnadlink.onrender.com" >> /etc/apache2/apache2.conf
 
-# Set working directory
+# Set working directory back to /var/www/html
 WORKDIR /var/www/html
+
+# Define Apache run user/group to avoid startup warning
+RUN echo 'export APACHE_RUN_USER=www-data' >> /etc/apache2/envvars && \
+    echo 'export APACHE_RUN_GROUP=www-data' >> /etc/apache2/envvars
 
 # Run deployment script
 CMD ["/bin/bash", "/var/www/html/scripts/deploy.sh"]
