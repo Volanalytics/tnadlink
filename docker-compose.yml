@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  tnadlink:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tnadlink-app
+    ports:
+      - "8080:80"
+    volumes:
+      - ./config:/var/www/html/config
+      - ./scripts:/var/www/html/scripts
+      - ./custom:/var/www/html/custom
+      - ./var:/var/www/html/var
+      - ./docker/php.ini:/usr/local/etc/php/conf.d/custom.ini
+    environment:
+      - SITE_URL=http://localhost:8080
+      - SITE_NAME=TN Ad Link (Development)
+      - SUPABASE_DB_HOST=${SUPABASE_DB_HOST}
+      - SUPABASE_DB_PORT=${SUPABASE_DB_PORT:-5432}
+      - SUPABASE_DB_USER=${SUPABASE_DB_USER}
+      - SUPABASE_DB_PASSWORD=${SUPABASE_DB_PASSWORD}
+      - SUPABASE_DB_NAME=${SUPABASE_DB_NAME}
+      - SUPABASE_DB_SCHEMA=${SUPABASE_DB_SCHEMA:-tnadlink}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@tnadlink.com}
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-changeThisPassword}
+    restart: unless-stopped
+    networks:
+      - tnadlink-network
+
+  adminer:
+    image: adminer
+    container_name: tnadlink-adminer
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    environment:
+      - ADMINER_DEFAULT_SERVER=${SUPABASE_DB_HOST}
+      - ADMINER_DEFAULT_DB_DRIVER=pgsql
+      - ADMINER_DEFAULT_DB_NAME=${SUPABASE_DB_NAME}
+      - ADMINER_DEFAULT_DB_USERNAME=${SUPABASE_DB_USER}
+    networks:
+      - tnadlink-network
+
+networks:
+  tnadlink-network:
+    driver: bridge
