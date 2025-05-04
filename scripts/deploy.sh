@@ -3,47 +3,10 @@
 # Log start of deployment
 echo "Starting TN Ad Link deployment process..."
 
-# Run the Apache fix script first to ensure Apache can start properly
-if [ -f "/var/www/html/scripts/apache-fix.sh" ]; then
-    echo "Running Apache configuration fix script..."
-    bash /var/www/html/scripts/apache-fix.sh
-fi
-
-# Run the comprehensive fix script for the autoload issue
-if [ -f "/var/www/html/scripts/comprehensive-fix.sh" ]; then
-    echo "Running comprehensive fix script..."
-    bash /var/www/html/scripts/comprehensive-fix.sh
-else
-    echo "Comprehensive fix script not found. Creating a basic fix..."
-    
-    # Minimal autoload.php creation
-    mkdir -p /var/www/html/public/lib/vendor
-    cat > /var/www/html/public/lib/vendor/autoload.php << 'EOL'
-<?php
-// Basic autoloader
-spl_autoload_register(function ($class) {
-    $file = str_replace('\\', '/', $class) . '.php';
-    if (file_exists(__DIR__ . '/../' . $file)) {
-        require_once __DIR__ . '/../' . $file;
-        return true;
-    }
-    return false;
-});
-EOL
-fi
-
-# Run the installation fix script
-if [ -f "/var/www/html/scripts/installation-fix.sh" ]; then
-    echo "Running installation fix script..."
-    bash /var/www/html/scripts/installation-fix.sh
-fi
-
-# Add admin dashboard if needed
-if [ -f "/var/www/html/scripts/admin-dashboard.php" ]; then
-    echo "Installing custom admin dashboard..."
-    cp /var/www/html/scripts/admin-dashboard.php /var/www/html/public/www/admin/dashboard.php
-    chmod 755 /var/www/html/public/www/admin/dashboard.php
-fi
+# Create required directories
+mkdir -p /var/www/html/public/www/admin
+mkdir -p /var/www/html/public/var
+mkdir -p /var/www/html/public/lib/vendor
 
 # Wait for database connection
 echo "Checking database connection..."
@@ -65,13 +28,6 @@ DB_PASS=$(echo $SUPABASE_DB_PASSWORD)
 DB_NAME=$(echo $SUPABASE_DB_NAME)
 DB_SCHEMA=$(echo ${SUPABASE_DB_SCHEMA:-tnadlink})
 
-# Determine the correct port for URLs
-if [ -f "/etc/apache2/ports.conf" ] && grep -q "Listen 8080" /etc/apache2/ports.conf; then
-    PORT=":8080"
-else
-    PORT=""
-fi
-
 # Create domain configuration file
 echo "Creating domain configuration file..."
 cat > /var/www/html/public/var/${HOSTNAME}.conf.php << EOL
@@ -91,12 +47,12 @@ schema="$DB_SCHEMA"
 ssl=true
 
 [webpath]
-admin="https://${HOSTNAME}${PORT}/www/admin"
-delivery="https://${HOSTNAME}${PORT}/delivery"
-deliverySSL="https://${HOSTNAME}${PORT}/delivery"
-images="https://${HOSTNAME}${PORT}/images"
-imagesSSL="https://${HOSTNAME}${PORT}/images"
-api="https://${HOSTNAME}${PORT}/api"
+admin="https://${HOSTNAME}/www/admin"
+delivery="https://${HOSTNAME}/delivery"
+deliverySSL="https://${HOSTNAME}/delivery"
+images="https://${HOSTNAME}/images"
+imagesSSL="https://${HOSTNAME}/images"
+api="https://${HOSTNAME}/api"
 
 [ui]
 applicationName="TN Ad Link"
@@ -150,32 +106,100 @@ else
     echo "TN Ad Link is already installed."
 fi
 
-# Apply custom headers for security
-echo "Setting security headers..."
-cat > /etc/apache2/conf-available/security-headers.conf << EOL
-<IfModule mod_headers.c>
-    Header always set X-Frame-Options "SAMEORIGIN"
-    Header always set X-Content-Type-Options "nosniff"
-    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
-    Header always set Content-Security-Policy "default-src 'self' https://${HOSTNAME}; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'"
-    Header always set Referrer-Policy "strict-origin-when-cross-origin"
-    Header always set Permissions-Policy "geolocation=(self), microphone=(), camera=()"
-</IfModule>
+# Create a simple admin page
+cat > /var/www/html/public/www/admin/index.php << 'EOL'
+<?php
+// Simple admin page for TN Ad Link
+$year = date('Y');
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TN Ad Link Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        header {
+            background-color: #0057e7;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h1, h2 {
+            margin-top: 0;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>TN Ad Link Admin Dashboard</h1>
+    </header>
+    <div class="container">
+        <div class="card">
+            <h2>Welcome to TN Ad Link Administration</h2>
+            <p>This is a simplified admin dashboard for the TN Ad Link platform.</p>
+            <p>System Status: Running</p>
+        </div>
+        
+        <div class="card">
+            <h2>Server Information</h2>
+            <ul>
+                <li>PHP Version: <?php echo phpversion(); ?></li>
+                <li>Server Software: <?php echo $_SERVER['SERVER_SOFTWARE'] ?? 'PHP Built-in Server'; ?></li>
+                <li>Document Root: <?php echo $_SERVER['DOCUMENT_ROOT'] ?? getcwd(); ?></li>
+                <li>Current Time: <?php echo date('Y-m-d H:i:s'); ?></li>
+            </ul>
+        </div>
+        
+        <div class="card">
+            <h2>Quick Links</h2>
+            <ul>
+                <li><a href="/">Home Page</a></li>
+                <li><a href="/www/admin">Admin Dashboard</a></li>
+            </ul>
+        </div>
+        
+        <div class="footer">
+            &copy; <?php echo $year; ?> TN Ad Link. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>
 EOL
 
-a2enconf security-headers
-
-# Set permissions again to be sure
-echo "Setting permissions..."
-chmod -R 777 /var/www/html/public/var
-chmod -R 777 /var/www/html/public/plugins
-chmod -R 777 /var/www/html/public/www
-chmod -R 777 /var/www/html/public/lib
-chmod -R 777 /var/www/html/var
-
-# Create a default welcome page
-echo "Creating welcome page..."
+# Create a simple home page
 cat > /var/www/html/public/index.php << 'EOL'
+<?php
+// Simple home page for TN Ad Link
+$year = date('Y');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -190,7 +214,7 @@ cat > /var/www/html/public/index.php << 'EOL'
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             background: linear-gradient(to bottom, #0057e7, #ffffff);
             color: #333;
         }
@@ -201,6 +225,7 @@ cat > /var/www/html/public/index.php << 'EOL'
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             max-width: 800px;
+            width: 90%;
         }
         h1 {
             color: #0057e7;
@@ -241,28 +266,40 @@ cat > /var/www/html/public/index.php << 'EOL'
         
         <div class="message">
             <p>Welcome to TN Ad Link, Tennessee's premier advertising server platform!</p>
-            <p>The TN Ad Link platform is running successfully.</p>
-            <p>If you're an administrator, please proceed to the admin section.</p>
+            <p>The TN Ad Link platform is now running.</p>
+            <p>If you're an administrator, you can access the admin panel below:</p>
             
             <a href="/www/admin" class="button">Admin Panel</a>
         </div>
         
         <div class="footer">
-            &copy; <?php echo date('Y'); ?> TN Ad Link. All rights reserved.
+            &copy; <?php echo $year; ?> TN Ad Link. All rights reserved.
         </div>
     </div>
 </body>
 </html>
 EOL
 
-# Debug info
-echo "Directory structure of admin directory:"
-find /var/www/html/public/www/admin -type f -name "*.php" | xargs ls -la 2>/dev/null || echo "No PHP files found in admin directory"
+# Set up autoloader
+mkdir -p /var/www/html/public/lib/vendor
+cat > /var/www/html/public/lib/vendor/autoload.php << 'EOL'
+<?php
+// Minimal autoloader for TN Ad Link
+spl_autoload_register(function ($class) {
+    $file = str_replace('\\', '/', $class) . '.php';
+    if (file_exists(__DIR__ . '/../' . $file)) {
+        require_once __DIR__ . '/../' . $file;
+        return true;
+    }
+    return false;
+});
+echo "// Minimal autoloader created\n";
+EOL
 
-# Check Apache configuration for errors
-echo "Checking Apache configuration for errors..."
-apache2ctl configtest
+# Set file permissions
+chmod -R 755 /var/www/html/public
 
-# Start Apache with debugging
-echo "Starting TN Ad Link server..."
-apache2ctl -e debug -DFOREGROUND
+# Start PHP's built-in web server
+cd /var/www/html/public
+echo "Starting PHP built-in web server on port 8080..."
+exec php -S 0.0.0.0:8080
