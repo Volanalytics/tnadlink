@@ -3,6 +3,12 @@
 # Log start of deployment
 echo "Starting TN Ad Link deployment process..."
 
+# Run the Apache fix script first to ensure Apache can start properly
+if [ -f "/var/www/html/scripts/apache-fix.sh" ]; then
+    echo "Running Apache configuration fix script..."
+    bash /var/www/html/scripts/apache-fix.sh
+fi
+
 # Run the comprehensive fix script for the autoload issue
 if [ -f "/var/www/html/scripts/comprehensive-fix.sh" ]; then
     echo "Running comprehensive fix script..."
@@ -32,6 +38,13 @@ if [ -f "/var/www/html/scripts/installation-fix.sh" ]; then
     bash /var/www/html/scripts/installation-fix.sh
 fi
 
+# Add admin dashboard if needed
+if [ -f "/var/www/html/scripts/admin-dashboard.php" ]; then
+    echo "Installing custom admin dashboard..."
+    cp /var/www/html/scripts/admin-dashboard.php /var/www/html/public/www/admin/dashboard.php
+    chmod 755 /var/www/html/public/www/admin/dashboard.php
+fi
+
 # Wait for database connection
 echo "Checking database connection..."
 php /var/www/html/scripts/wait-for-db.php
@@ -52,6 +65,13 @@ DB_PASS=$(echo $SUPABASE_DB_PASSWORD)
 DB_NAME=$(echo $SUPABASE_DB_NAME)
 DB_SCHEMA=$(echo ${SUPABASE_DB_SCHEMA:-tnadlink})
 
+# Determine the correct port for URLs
+if [ -f "/etc/apache2/ports.conf" ] && grep -q "Listen 8080" /etc/apache2/ports.conf; then
+    PORT=":8080"
+else
+    PORT=""
+fi
+
 # Create domain configuration file
 echo "Creating domain configuration file..."
 cat > /var/www/html/public/var/${HOSTNAME}.conf.php << EOL
@@ -71,12 +91,12 @@ schema="$DB_SCHEMA"
 ssl=true
 
 [webpath]
-admin="https://${HOSTNAME}/www/admin"
-delivery="https://${HOSTNAME}/delivery"
-deliverySSL="https://${HOSTNAME}/delivery"
-images="https://${HOSTNAME}/images"
-imagesSSL="https://${HOSTNAME}/images"
-api="https://${HOSTNAME}/api"
+admin="https://${HOSTNAME}${PORT}/www/admin"
+delivery="https://${HOSTNAME}${PORT}/delivery"
+deliverySSL="https://${HOSTNAME}${PORT}/delivery"
+images="https://${HOSTNAME}${PORT}/images"
+imagesSSL="https://${HOSTNAME}${PORT}/images"
+api="https://${HOSTNAME}${PORT}/api"
 
 [ui]
 applicationName="TN Ad Link"
@@ -153,14 +173,96 @@ chmod -R 777 /var/www/html/public/www
 chmod -R 777 /var/www/html/public/lib
 chmod -R 777 /var/www/html/var
 
+# Create a default welcome page
+echo "Creating welcome page..."
+cat > /var/www/html/public/index.php << 'EOL'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TN Ad Link</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to bottom, #0057e7, #ffffff);
+            color: #333;
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+        }
+        h1 {
+            color: #0057e7;
+            margin-bottom: 1rem;
+        }
+        .subtitle {
+            color: #d31f1f;
+            margin-bottom: 2rem;
+        }
+        .message {
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        .button {
+            display: inline-block;
+            background-color: #0057e7;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+        .button:hover {
+            background-color: #003fb3;
+        }
+        .footer {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TN Ad Link</h1>
+        <div class="subtitle">Tennessee's Premier Ad Server</div>
+        
+        <div class="message">
+            <p>Welcome to TN Ad Link, Tennessee's premier advertising server platform!</p>
+            <p>The TN Ad Link platform is running successfully.</p>
+            <p>If you're an administrator, please proceed to the admin section.</p>
+            
+            <a href="/www/admin" class="button">Admin Panel</a>
+        </div>
+        
+        <div class="footer">
+            &copy; <?php echo date('Y'); ?> TN Ad Link. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>
+EOL
+
 # Debug info
 echo "Directory structure of admin directory:"
 find /var/www/html/public/www/admin -type f -name "*.php" | xargs ls -la 2>/dev/null || echo "No PHP files found in admin directory"
 
-# Output Apache configuration
-echo "Apache configuration:"
-apache2 -S
+# Check Apache configuration for errors
+echo "Checking Apache configuration for errors..."
+apache2ctl configtest
 
-# Start Apache
+# Start Apache with debugging
 echo "Starting TN Ad Link server..."
-exec apache2-foreground
+apache2ctl -e debug -DFOREGROUND
