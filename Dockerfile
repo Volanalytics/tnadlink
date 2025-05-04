@@ -1,4 +1,3 @@
-cat > Dockerfile << 'EOL'
 FROM php:8.1-apache
 
 # Install required extensions and dependencies
@@ -28,90 +27,55 @@ RUN apt-get update && apt-get install -y \
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Set up runtime directory for Apache
-RUN mkdir -p /var/run/apache2 \
-    && echo 'Define APACHE_RUN_DIR /var/run/apache2' >> /etc/apache2/apache2.conf
-
-# Configure PHP
-COPY docker/php.ini /usr/local/etc/php/conf.d/custom.ini
-
 # Set Apache document root
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Configure virtual host for tnadlink.com
-RUN echo '<VirtualHost *:80>\n\
-    ServerName tnadlink.com\n\
-    ServerAlias www.tnadlink.com tnadlink.onrender.com\n\
-    DocumentRoot ${APACHE_DOCUMENT_ROOT}\n\
-    ErrorLog ${APACHE_LOG_DIR}/tnadlink-error.log\n\
-    CustomLog ${APACHE_LOG_DIR}/tnadlink-access.log combined\n\
-    <Directory ${APACHE_DOCUMENT_ROOT}>\n\
-        Options Indexes FollowSymLinks\n\
-        AllowOverride All\n\
-        Require all granted\n\
-    </Directory>\n\
-</VirtualHost>' > /etc/apache2/sites-available/tnadlink.conf
+# Enable Apache modules
+RUN a2enmod rewrite headers
 
-# Enable site and Apache modules
-RUN a2ensite tnadlink && a2enmod rewrite headers
+# Define Apache run user/group to avoid startup warning
+RUN echo 'export APACHE_RUN_USER=www-data' >> /etc/apache2/envvars && \
+    echo 'export APACHE_RUN_GROUP=www-data' >> /etc/apache2/envvars
 
-# Create directory structure with correct permissions
+# Configure PHP
+COPY docker/php.ini /usr/local/etc/php/conf.d/custom.ini
+
+# Create directory structure
 RUN mkdir -p /var/www/html/public \
     /var/www/html/custom \
     /var/www/html/config \
     /var/www/html/scripts \
-    /var/www/html/var/cache \
-    /var/www/html/var/logs \
-    /var/www/html/var/tmp \
-    /var/www/html/public/var
+    /var/www/html/var
 
-# Set working directory
-WORKDIR /var/www/html
+# Create the complete directory structure for Revive Adserver
+RUN mkdir -p /var/www/html/public/lib/vendor \
+    /var/www/html/public/var \
+    /var/www/html/public/plugins \
+    /var/www/html/public/www
 
-# Copy Revive Adserver files - this is the key difference - we copy to the html root first
-COPY revive/ /var/www/html/
+# Copy Revive Adserver files
+COPY revive/ /var/www/html/public/
+
+# Create a minimal vendor autoload file
+RUN mkdir -p /var/www/html/public/lib/vendor && \
+    echo '<?php\n\n// Minimal autoloader\nspl_autoload_register(function ($class) {\n    $file = str_replace("\\\", "/", $class) . ".php";\n    if (file_exists(__DIR__ . "/../" . $file)) {\n        require_once __DIR__ . "/../" . $file;\n        return true;\n    }\n    return false;\n});\n' > /var/www/html/public/lib/vendor/autoload.php
 
 # Copy application files
 COPY custom/ /var/www/html/custom/
 COPY config/ /var/www/html/config/
 COPY scripts/ /var/www/html/scripts/
 
-# Fix the directory structure by copying all needed files to public directory
-RUN cp -R /var/www/html/lib /var/www/html/public/ && \
-    cp -R /var/www/html/plugins /var/www/html/public/ && \
-    cp -R /var/www/html/www /var/www/html/public/ && \
-    cp -R /var/www/html/*.php /var/www/html/public/ && \
-    cp -R /var/www/html/*.txt /var/www/html/public/ && \
-    cp -R /var/www/html/*.md /var/www/html/public/ && \
-    cp -R /var/www/html/*.xml /var/www/html/public/ && \
-    cp -R /var/www/html/*.html /var/www/html/public/ && \
-    cp -R /var/www/html/var /var/www/html/public/ || true
-
-# Install composer dependencies
-WORKDIR /var/www/html
-RUN if [ -f composer.json ]; then \
-    composer install --no-dev --no-interaction --optimize-autoloader; \
-    fi
-
 # Set permissions
-RUN chmod -R 777 /var/www/html/public/var || true
-RUN chmod -R 777 /var/www/html/public/plugins || true
-RUN chmod -R 777 /var/www/html/public/www/admin/plugins || true
-RUN chmod -R 777 /var/www/html/var || true
-RUN chmod -R 777 /var/www/html/public/lib || true
+RUN chmod -R 777 /var/www/html/public/var
+RUN chmod -R 777 /var/www/html/public/plugins
+RUN chmod -R 777 /var/www/html/public/www
+RUN chmod -R 777 /var/www/html/public/lib
+RUN chmod -R 777 /var/www/html/var
 
-# Set global ServerName
-RUN echo "ServerName tnadlink.onrender.com" >> /etc/apache2/apache2.conf
-
-# Set working directory back to /var/www/html
+# Set working directory
 WORKDIR /var/www/html
-
-# Define Apache run user/group to avoid startup warning
-RUN echo 'export APACHE_RUN_USER=www-data' >> /etc/apache2/envvars && \
-    echo 'export APACHE_RUN_GROUP=www-data' >> /etc/apache2/envvars
 
 # Run deployment script
 CMD ["/bin/bash", "/var/www/html/scripts/deploy.sh"]
-EOL
