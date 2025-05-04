@@ -57,14 +57,13 @@ RUN mkdir -p /var/www/html/public \
     /var/www/html/var/tmp
 
 # Copy the Revive Adserver zip file from local assets directory
-COPY assets/revive-adserver-5.4.1.zip /tmp/
+COPY assets/revive-adserver-5.5.2.zip /tmp/
 
 # Extract Revive Adserver
 RUN cd /tmp && \
     unzip -q revive-adserver-5.4.1.zip && \
     cp -r revive-adserver/* /var/www/html/public/ && \
-    rm -rf /tmp/revive-adserver* /tmp/revive-adserver-5.4.1.zip
-
+    rm -rf /tmp/revive-adserver* /tmp/revive-adserver-5.5.2.zip
 # Copy application files
 COPY custom/ /var/www/html/custom/
 COPY config/ /var/www/html/config/
