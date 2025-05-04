@@ -3,6 +3,10 @@ name: Setup TN Ad Link Project Structure
 on:
   workflow_dispatch:  # Allows manual triggering from GitHub UI
 
+# Add permissions to allow writing to the repository
+permissions:
+  contents: write
+
 jobs:
   setup:
     runs-on: ubuntu-latest
