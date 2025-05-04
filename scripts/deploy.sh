@@ -11,6 +11,9 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# Make sure the var directory exists
+mkdir -p /var/www/html/public/var
+
 # Copy configuration file
 echo "Setting up database configuration..."
 cp /var/www/html/config/database.conf.php /var/www/html/public/var/
@@ -22,20 +25,12 @@ if [ ! -f /var/www/html/public/var/INSTALLED ]; then
     # Create database schema if it doesn't exist
     php /var/www/html/scripts/create-schema.php
     
-    # Run installation process
-    php /var/www/html/scripts/install.php
-    
-    # Apply TN Ad Link branding
-    echo "Applying TN Ad Link branding..."
-    php /var/www/html/scripts/apply-branding.php
-    
     # Create installation marker
     echo "$(date)" > /var/www/html/public/var/INSTALLED
     
     echo "TN Ad Link installation completed successfully."
 else
-    echo "TN Ad Link is already installed. Checking for updates..."
-    php /var/www/html/scripts/check-updates.php
+    echo "TN Ad Link is already installed."
 fi
 
 # Apply custom headers for security
@@ -52,10 +47,6 @@ cat > /etc/apache2/conf-available/security-headers.conf << EOL
 EOL
 
 a2enconf security-headers
-
-# Clear cache
-echo "Clearing cache..."
-rm -rf /var/www/html/public/var/cache/*
 
 # Start Apache
 echo "Starting TN Ad Link server..."
