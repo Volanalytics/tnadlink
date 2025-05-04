@@ -1,0 +1,34 @@
+name: Deploy TN Ad Link to Render
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, xml, pgsql, zip, gd, intl
+          coverage: none
+      
+      - name: Validate configuration
+        run: |
+          php -l docker/php.ini
+          php -l config/database.conf.php
+          php -l scripts/wait-for-db.php
+          php -l scripts/create-schema.php
+      
+      - name: Deploy to Render
+        uses: JorgeLNJunior/render-deploy@v1.4.2
+        with:
+          service_id: ${{ secrets.RENDER_SERVICE_ID }}
+          api_key: ${{ secrets.RENDER_API_KEY }}
+          clear_cache: true
