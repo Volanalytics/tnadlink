@@ -3,30 +3,27 @@
 # Log start of deployment
 echo "Starting TN Ad Link deployment process..."
 
-# Run the init.php fix script if it exists
-if [ -f "/var/www/html/scripts/fix-init.sh" ]; then
-    echo "Running init.php fix script..."
-    bash /var/www/html/scripts/fix-init.sh
-fi
-
-# Create the autoload.php file if it doesn't exist
-if [ ! -f "/var/www/html/public/lib/vendor/autoload.php" ]; then
-    echo "Creating autoload.php file..."
+# Run the comprehensive fix script
+if [ -f "/var/www/html/scripts/comprehensive-fix.sh" ]; then
+    echo "Running comprehensive fix script..."
+    bash /var/www/html/scripts/comprehensive-fix.sh
+else
+    echo "Comprehensive fix script not found. Creating a basic fix..."
+    
+    # Minimal autoload.php creation
     mkdir -p /var/www/html/public/lib/vendor
     cat > /var/www/html/public/lib/vendor/autoload.php << 'EOL'
 <?php
-
-// Minimal autoloader
+// Basic autoloader
 spl_autoload_register(function ($class) {
-    $file = str_replace("\\", "/", $class) . ".php";
-    if (file_exists(__DIR__ . "/../" . $file)) {
-        require_once __DIR__ . "/../" . $file;
+    $file = str_replace('\\', '/', $class) . '.php';
+    if (file_exists(__DIR__ . '/../' . $file)) {
+        require_once __DIR__ . '/../' . $file;
         return true;
     }
     return false;
 });
 EOL
-    echo "Created autoload.php file."
 fi
 
 # Wait for database connection
@@ -148,6 +145,9 @@ EOL
 
 a2enconf security-headers
 
+# Global ServerName to suppress warning
+echo "ServerName ${HOSTNAME}" >> /etc/apache2/apache2.conf
+
 # Set proper permissions
 echo "Setting permissions..."
 chmod -R 777 /var/www/html/public/var
@@ -156,13 +156,13 @@ chmod -R 777 /var/www/html/public/www
 chmod -R 777 /var/www/html/public/lib
 chmod -R 777 /var/www/html/var
 
-# Output init.php contents for debugging
-echo "Contents of init.php line 45:"
-sed -n '44,46p' /var/www/html/public/init.php 2>/dev/null || echo "Cannot access init.php"
-
-# Output directory listing for debugging
+# Debug info
 echo "Directory structure:"
-ls -la /var/www/html/public/lib/vendor
+find /var/www/html/public/lib -type f -name "autoload.php" | xargs ls -la
+
+# Output init.php contents for debugging
+echo "Contents of init.php around line 45:"
+sed -n '44,50p' /var/www/html/public/init.php 2>/dev/null || echo "Cannot access init.php"
 
 # Start Apache
 echo "Starting TN Ad Link server..."
