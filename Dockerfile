@@ -24,9 +24,6 @@ RUN apt-get update && apt-get install -y \
     intl \
     opcache
 
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
 # Set up runtime directory for Apache
 RUN mkdir -p /var/run/apache2 \
     && echo 'Define APACHE_RUN_DIR /var/run/apache2' >> /etc/apache2/apache2.conf
@@ -66,35 +63,22 @@ RUN mkdir -p /var/www/html/public \
     /var/www/html/var/tmp \
     /var/www/html/public/var
 
-# Download Revive Adserver
-WORKDIR /tmp
-RUN curl -LO https://github.com/revive-adserver/revive-adserver/releases/download/v5.5.2/revive-adserver-5.5.2.zip \
-    && unzip -q revive-adserver-5.5.2.zip \
-    && ls -la \
-    && cp -r revive-adserver/* /var/www/html/public/ \
-    && cd /var/www/html/public \
-    && ls -la \
-    && rm -rf /tmp/revive-adserver* /tmp/revive-adserver-5.5.2.zip
+# Copy Revive Adserver files
+COPY revive/ /var/www/html/public/
 
 # Copy application files
 COPY custom/ /var/www/html/custom/
 COPY config/ /var/www/html/config/
 COPY scripts/ /var/www/html/scripts/
 
-# Install Composer dependencies
-WORKDIR /var/www/html/public
-RUN if [ -f "composer.json" ]; then \
-        composer install --no-dev --optimize-autoloader; \
-    fi
-
-# Create lib/vendor directory if needed
-RUN mkdir -p /var/www/html/public/lib/vendor
-
 # Set permissions
 RUN chmod -R 777 /var/www/html/public/var || true
 RUN chmod -R 777 /var/www/html/public/plugins || true
 RUN chmod -R 777 /var/www/html/public/www/admin/plugins || true
 RUN chmod -R 777 /var/www/html/var || true
+
+# Set global ServerName
+RUN echo "ServerName tnadlink.onrender.com" >> /etc/apache2/apache2.conf
 
 # Set working directory
 WORKDIR /var/www/html
